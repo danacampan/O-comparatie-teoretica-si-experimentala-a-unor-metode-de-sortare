@@ -1,0 +1,622 @@
+\documentclass[10pt]{article}
+\usepackage[romanian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{comment}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  backgroundcolor=\color{gray!10},
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt
+}
+\renewcommand\lstlistingname{Fragment de cod}
+\renewcommand\lstlistlistingname{Fragmente de cod}
+
+
+\title{Comparație teoretică și experimentală a unor metode de
+sortare}
+\author{ Maria Dana Ștefania Câmpan \\
+Departamentul de Informatică,\\
+Facultatea de Matematică şi Informatică, \\
+Universitatea de Vest Timişoara, România, \\
+E-mail: \href{mailto: maria.campan03@e-uvt.ro}
+{\texttt{maria.campan03@e-uvt.ro}}
+}
+\date{Mai 2023}
+
+
+\begin{document}
+\maketitle
+\begin{abstract}
+    În cadrul acestei lucrări, am investigat și analizat diverse metode de sortare utilizate în domeniul algoritmilor. Am început prin a explora algoritmul clasic de sortare, metoda interchimbării, care funcționează prin compararea fiecărui element cu cel din fața sa, și schimbarea acestora dacă nu sunt în ordine. Apoi, am trecut la metode mai avansate, precum algoritmul de partiționare, care utilizează o strategie de divizare pentru a sorta eficient seturile de date mari. De asemenea, am investigat și metoda de interclasare, care combină divizarea recursivă și combinarea pentru a obține o performanță excelentă în sortarea datelor. Pe parcursul cercetării, am comparat aceste metode de sortare, și încă câteva, din punct de vedere al timpului de execuție și a eficienței sortării, evaluând astfel cum se comportă fiecare metodă, și dacă există cazuri în care funcționează diferit față de cum o fac de obicei.
+\end{abstract}
+
+\pagebreak
+\tableofcontents
+\listoftables
+\listoffigures
+\lstlistoflistings
+\pagebreak
+
+\section{Introducere}
+Metodele de sortare au fost dintotdeauna un subiect fundamental în informatică, acestea ne ajută în realizarea multor aplicații pe care le folosim în viața de zi cu zi, de la motoarele de căutare care sortează rezultatele căutărilor în funcție de cât de relevante sunt, la sistemele bancare care folosesc metode de sortare pentru a procesa tranzacții bancare, sortarea de date în baze de date ș.a.m.d.
+
+Însă, de obicei, ca să realizăm aceste aplicații, avem nevoie de niște metode de sortare bine implementate și optimizate, astfel încât acestea sa fie sortate rapid și eficient.
+
+Iar asta ne conduce la problema pe care dorim să o abordăm în acestă lucrare. 
+ 
+
+
+\subsection{Motivație}
+În această lucrare, vom încerca să răspundem la întrebarea: “Care ar fi cea mai bună 
+metodă de sortare?”, iar pentru a face asta vom începe prin a face mai multe
+comparații teoretice între metodele de sortare, iar apoi vom vedea cum se comportă
+algoritmii de sortare când îi implementăm într-un limbaj de programare și trebuie să sortăm diferiți vectori de numere. 
+
+Aici eu voi încerca să compar timpii de execuție între metode, iar apoi voi contoriza comparațiile făcute de fiecare metodă de sortare în parte, și vom vedea împreună ce rezultate găsim.
+
+
+\section{Descrierea formală a problemei și soluției}
+\label{sec:fromala}
+\subsection{Preliminarii}
+
+Să începem prin a prezenta în mare ce anume e sortarea și pentru ce o folosim.
+
+Conform Dicționarului Explicativ Român, acțiunea de a sorta
+înseamnă \textbf{"a alege”}, sau \textbf{”a
+aranja”} anumite lucruri într-o anumită ordine, în funcție de diverse criterii. În cazul nostru, folosim anumite metode de sortare pentru a rezolva diverse probleme de
+sortare, cu diverse criterii. 
+
+Acum, pentru a vedea exact cum stă treaba cu metodele de sortare în programare,voi începe să citez din ~\cite{donaldknuthsorting}.
+
+Știm că metodele de sortare pot fi clasate în două tipuri: 
+\textbf{sortare internă} și \textbf{sortare externă}, în funcție de cum sunt datele procesate și prelucrate. Asta înseamnă că sortarea internă se ocupă cu sortarea unui set de date care se poate încărca în \textbf{ memoria principală a calculatoarelor}, pe când sortarea externă se folosește atunci când setul de date depășește capacitatea memoriei, și trebuie să fie stocate pe un \textbf{mediu extern}, precum un disc dur sau o bandă magnetică. 
+
+Din punct de vedere al timpului de execuție, algoritmii de sortare pot rula  în \textbf{timp liniar} sau \textbf{timp neliniar}. Când un algoritm rulează în timp liniar, înseamnă că timpul de execuție al acestuia crește direct proporțional cu mărimea datelor de intrare. Iar când avem timp neliniar, acesta evident nu rulează în timp proporțional cu mărimea intrării. De exemplu, atunci când un algoritm are complexitatea timpului $O(n^2)$, timpul de execuție crește până la pătratul datelor de intrare.
+
+
+Astfel, există mai multe metode de sortare cunoscute, pe care îi vom prezenta în următoarea subsecțiune.
+
+\subsection{Formalizare a problemei}
+
+Acum, vom face o descriere scurtă a algoritmilor de sortare, și a complexității timpului pentru fiecare dintre ei. Pentru asta voi cita din ~\cite{cormenintroduction} și din ~\cite{donaldknuthsorting}
+
+
+\begin{enumerate}
+\item \textbf{Sortare prin interschimbare(Bubble Sort)} - algoritm de sortare internă de timp liniar care compară elementele adiacente și le schimbă locul dacă nu sunt în ordine. Complexitatea timpului în cel mai bun caz este O(n), în cazul în care tabloul este deja sortat, iar în cel mai rău caz este $O(n^2)$, unde tabloul este sortat invers.
+
+\item \textbf{Sortare prin selecție(Selection Sort)} - algoritm de sortare internă de timp neliniar, care găsește cel mai mic element din lista nesortată și îl mută la începutul listei. Complexitatea timpului este $O(n^2)$ atât în cel mai bun caz, cât și în cel mai rău.
+
+\item \textbf{Sortare prin inserție(Insertion Sort)} - algoritm de sortare internă de timp liniar, care inserează fiecare element pe poziția corectă în lista sortată. Complexitatea timpului în cel mai bun caz este O(n), când tabloul este deja sortat, iar algoritmul doar parcurge vectorul fără a face schimbări. În cel mai rău caz, complexitatea timpului este $O(n^2)$ când tabloul este în ordine inversă, și trebuie să comparăm fiecare element cu toate elementele sortate dinaintea lui.
+
+\item \textbf{Sortare prin interclasare (Merge Sort)} - algoritm de sortare externă de timp liniar, care împarte lista nesortată în două părți, le sortează separat și apoi le combină rezultând o listă sortată. Aici, timpul de execuție este unul consistent, complexitatea timpului fiind O(nlogn) atât în cel mai bun cât și cel mai rău caz, indiferent de ordinea inițială a tabloului.
+
+\item \textbf{Sortare prin partiționare(Quick Sort)} - algoritm de sortare internă de timp neliniar, care împarte lista în două jumătăți în funcție de o valoare pivot și sortează fiecare parte separat, în jurul elementului pivot. Complexitatea timpului în cel mai bun caz este O(nlogn), atunci când pivotul împarte mereu tabloul în părți egale. În cel mai rău caz, complexitatea timpului va fi $O(n^2)$.
+
+\item \textbf{Sortare prin numărare(Counting Sort)} - algoritm de sortare internă de timp liniar care sortează un tablou de elemente pozitive prin numărarea aparițiilor elementelor în tablou și construirea tabloul sortat folosind aceste informații.
+Complexitatea timpului este O(n+k) pentru ambele cazuri.
+\end{enumerate}
+
+Mai jos în Tabela~\ref{tab:complexitate} putem observa complexitatea timpului pentru fiecare metodă de sortare.
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{ ||r| c| c| c|| }
+    \hline\hline
+    \textbf{Algoritm} & \textbf{Cel mai bun caz} & \textbf{Cel mai rău caz} \\
+    \hline
+    Sortare prin interchimbare & $O(n)$  & $O(n^2)$\\
+    Sortare prin selecție & $O(n^2)$  & $O(n^2)$\\
+    Sortare prin inserție & $O(n)$ & $O(n^2)$ \\
+    Sortare prin interclasare & $O(n \log n)$ & $O(n \log n)$ \\
+    Sortare prin partiționare & $O(n \log n)$ & $O(n^2)$ \\
+    Sortare prin numărare & $O(n + k)$ & $O(n+k)$\\
+    \hline\hline
+  \end{tabular}
+    \caption{Complexitatea timpului pentru metode de sortare}
+    \label{tab:complexitate}
+\end{table}
+
+
+\section{Modelarea și implementarea problemei și soluției}
+
+În continuare, pentru a descrie modul de implementare a problemelor și soluțiilor, vom introduce manualul de sistem și manualul de utilizare pentru fiecare algoritm de sortare:
+
+\begin{enumerate}
+  \item Manualul de sistem:
+  
+  • \textbf{Structuri de date}:
+  Pentru toți algoritmii de sortare, datele de intrare sunt un tablou unidimensional de numere întregi. În funcție de algoritm, poate fi necesară o structură suplimentară de date pentru a efectua sortarea.
+
+  •\textbf{Arhitectura sistemului}:
+  Aceste implementări pot fi realizate în orice limbaj de programare care suportă vectori și instruc\c tiuni repetitive. În exemplele de mai jos, am folosit C.
+  
+  •\textbf{Detalii de implementare}:
+  Pe lângă funcțiile pe care le voi introduce în lucrare, va trebui să definiți și funcția main, în care vă puteți declara și seta valori pentru tablourile de sortat.
+  În rest, pentru fiecare algoritm de sortare, există diferite detalii de implementare. Aceste detalii sunt descrise în manualul specific al algoritmului.
+
+\item Manualul de utilizare:
+
+  •\textbf{Instalare:}
+  Pentru a utiliza aceste implementări, trebuie să aveți instalat un compilator C pe calculatorul dumneavoastră. Un exemplu este Codeblocks, iar acesta poate fi descărcat și instalat gratuit de pe site-ul oficial CodeBlocks. 
+  
+  •\textbf{Interfața:}
+  Aceste implementări pot fi utilizate prin intermediul unei linii de comandă sau a unui script C. Puteți introduce elementele vectorului la tastatură și iar apoi veți vedea vectorul sortat la ieșire.
+
+•\textbf{Intrări și ieșiri:}
+ Puteți citi numărul de elemente din vector și fiecare element al vectorului la tastatură, sau vă puteți seta valorile din tablou chiar când îl declarați. Programul va afișa vectorul sortat în ordine crescătoare la ieșire.
+
+  
+\end{enumerate}
+
+\subsection{Sortare prin interschimbare(Bubble Sort):}
+
+\begin{itemize}
+
+
+\item \textbf{Detalii de implementare:}
+Pentru a implementa acest algoritm, am folosit o instrucțiune pentru a parcurge vectorul de la primul element la penultimul element. În interiorul acestei bucle, am utilizat încă o buclă  pentru a compara fiecare element cu următorul element din vector. Dacă următorul element este mai mic decât elementul curent, am inversat aceste două elemente. Acest proces se repetă până când nicio inversare nu mai este necesară.
+
+
+    
+\item  Avantaje:
+\begin{itemize}
+    \item probabil cel mai ușor de înțeles și de implementat algoritm
+
+    \item destul de stabil, nu va interschimba elementele dacă sunt egale
+    \end{itemize}
+
+\item Dezavantaje:
+ \begin{itemize}
+\
+\item complexitatea timpului este $O(n^2)$ în cel mai rău caz, ceea
+ce înseamnă că va fi mult mai lent pentru un set de date foarte mare, deci nu
+este prea eficient
+\end{itemize}
+\end{itemize}
+
+
+\begin{lstlisting}[caption=Funcția de interschimbare pentru Bubble Sort]
+void bubbleSort(int arr[], int n) {
+  int i, j, temp;
+  for (i = 0; i < n - 1; i++) {
+    for (j = 0; j < n - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection{Sortare prin selecție(Selection Sort):}
+\begin{itemize}
+
+\item \textbf{Detalii de implementare:}
+
+Pentru a implementa acest algoritm, am utilizat două bucle repetitive: prima buclă pentru a parcurge vectorul și a găsi cel mai mic element din vector, iar a doua buclă pentru a rearanja vectorul prin interschimbarea elementelor. În fiecare iterație a primei bucle, am căutat cel mai mic element din vector începând cu poziția curentă și am reținut indexul acestuia. Apoi, am interschimbat elementul curent cu cel mai mic element găsit. Acest proces se repetă până când toate elementele sunt sortate.
+
+
+ 
+
+\item  Avantaje:
+    
+-destul de ușor de înțeles și de implementat
+
+-funcționează bine pentru seturi mici de date
+
+\item  Dezavantaje:
+
+-nu funcționează la fel de bine pentru seturi mari de date
+
+-nu este destul de stabil, algoritmul va schimba
+poziția inițială a două elemente,chiar dacă sunt egale în valoare.
+\end{itemize}
+\begin{lstlisting}[caption=Implementarea metodei de selecție în C]
+    void selectionSort(int arr[], int n) {
+  int i, j, min_idx;
+  for (i = 0; i < n - 1; i++) {
+    min_idx = i;
+    for (j = i + 1; j < n; j++) {
+      if (arr[j] < arr[min_idx]) {
+        min_idx = j;
+      }
+    }
+    int temp = arr[i];
+    arr[i] = arr[min_idx];
+    arr[min_idx] = temp;
+  }
+}
+\end{lstlisting}
+
+
+\subsection{Sortare prin inserție(Insertion Sort): }
+
+\begin{itemize}
+
+\item \textbf{ Detalii de implementare:}
+Pentru a implementa sortarea prin inserție, am utilizat o buclă "pentru...execută",  și o buclă "cât timp" în interiorul primei bucle. Prima buclă parcurge vectorul de la a doua poziție până la ultima, iar a doua buclă "cât timp" mută elementul curent la poziția corectă din stânga, astfel încât să fie sortat în raport cu toate celelalte elemente din vector. Pentru a face acest lucru, am comparat elementul curent cu elementele din stânga sa și am mutat elementele mai mari cu o poziție spre dreapta, până când am găsit poziția corectă pentru elementul curent.
+
+
+\item Avantaje:
+
+-funcționează bine pentru seturi mici de date
+
+-este stabil, deoarece acesta mută doar
+elementele mai mari decât cel curent în poziția corectă,
+iar asta înseamnă că elementele egale rămân pe poziția inițială
+
+\item Dezavantaje:
+
+-nu este eficient
+\end{itemize}
+
+\begin{lstlisting}[caption=Metoda de inserție implementată in C]
+    void insertionSort(int arr[], int n) {
+  int i, key, j;
+  for (i = 1; i < n; i++) {
+    key = arr[i];
+    j = i - 1;
+    while (j >= 0 && arr[j] > key) {
+      arr[j + 1] = arr[j];
+      j = j - 1;
+    }
+    arr[j + 1] = key;
+  }
+}
+
+\end{lstlisting}
+
+\subsection{Sortare prin interclasare(Merge Sort):}
+
+\begin{itemize}
+
+
+\item \textbf{Detalii de implementare:}
+
+Pentru a implementa sortarea prin interclasare, am folosit o funcție care împarte vectorul în două subvectori egali, sortează fiecare subvector recursiv și apoi îi combină pentru a obține vectorul sortat final. Combinația se face prin compararea elementelor din cele două subvectori și adăugarea lor în vectorul suplimentar în ordine crescătoare.
+
+
+
+
+\item Avantaje:
+-mult mai rapid decât Bubble, Insertion și Selection Sort
+
+-este stabil, în faza de ordonare acesta copiază elementele egale în ordinea
+corectă
+
+\item Dezavantaje:
+
+-nu este eficient pentru seturi mici de date
+
+-folosește mai multă memorie pentru a stoca subtablourile sortate
+\end{itemize}
+
+\vspace{1cm}
+
+\newpage
+\begin{lstlisting}[caption=Metoda de interclasare implementată in C]
+    void merge(int arr[], int left, int mid, int right) {
+  int i, j, k;
+  int n1 = mid - left + 1;
+  int n2 = right - mid;
+  int L[n1], R[n2];
+  for (i = 0; i < n1; i++) {
+    L[i] = arr[left + i];
+  }
+  for (j = 0; j < n2; j++) {
+    R[j] = arr[mid + 1 + j];
+  }
+  i = 0;
+  j = 0;
+  k = left;
+  while (i < n1 && j < n2) {
+    if (L[i] <= R[j]) {
+      arr[k] = L[i];
+      i++;
+    } else {
+      arr[k] = R[j];
+      j++;
+    }
+    k++;
+  }
+  while (i < n1) {
+    arr[k] = L[i];
+    i++;
+    k++;
+  }
+  while (j < n2) {
+    arr[k] = R[j];
+    j++;
+    k++;
+  }
+}
+
+void mergeSort(int arr[], int left, int right) {
+  if (left < right) {
+    int mid = left + (right - left) / 2;
+    mergeSort(arr, left, mid);
+    mergeSort(arr, mid + 1, right);
+    merge(arr, left, mid, right);
+  }
+}
+
+\end{lstlisting}
+
+
+\subsection{Sortare prin partiționare(Quick Sort): }
+
+\begin{itemize}
+  
+  \item \textbf{Structuri de date:}
+Pentru implementarea acestui algoritm de sortare, se folosește un tablou unidimensional de numere întregi și două variabile pointer care indică începutul și sfârșitul subvectorului curent care trebuie sortat. Algoritmul alege un pivot din subvectorul curent și împarte vectorul în două subvectori - unul cu elemente mai mici decât pivotul și unul cu elemente mai mari decât pivotul.
+
+
+  \item \textbf{ Detalii de implementare:}
+Pentru a implementa sortarea prin partiționare, am folosit o funcție recursivă care alege un pivot din subvectorul curent și împarte vectorul în două subvectori - unul cu elemente mai mici decât pivot-ul și unul cu elemente mai mari decât pivotul. Apoi, sortăm recursiv fiecare subvector și combinăm vectorii sortați într-un vector final.
+
+
+\item Avantaje:
+
+-unul dintre cei mai rapizi algoritmi de sortare
+
+\item Dezavantaje:
+
+-poate fi puțin mai greu de implementat 
+
+\end{itemize}
+\begin{lstlisting}[caption=Metoda de partiționare implementată în C]
+    void swap(int* a, int* b) {
+  int t = *a;
+  *a = *b;
+  *b = t;
+}
+
+int partition(int arr[], int low, int high) {
+  int pivot = arr[high];
+  int i = low - 1;
+  for (int j = low; j < high; j++) {
+    if (arr[j] < pivot) {
+      i++;
+      swap(&arr[i], &arr[j]);
+    }
+  }
+  swap(&arr[i + 1], &arr[high]);
+  return i + 1;
+}
+
+void quickSort(int arr[], int low, int high) {
+  if (low < high) {
+    int pi = partition(arr, low, high);
+    quickSort(arr, low, pi - 1);
+    quickSort(arr, pi + 1, high);
+  }
+}
+
+\end{lstlisting}
+
+\subsection{Sortare prin numărare(Counting Sort):}
+
+\begin{itemize}
+
+\item \textbf{ Structuri de date: }
+
+Pentru implementarea acestui algoritm, este necesară folosirea unui tablou auxiliar count care stochează de câte ori apare fiecare element în tabloul de sortat. De asemenea, se mai folosește un tablou de intrare arr care reprezintă tabloul de sortat și un număr întreg n care reprezintă numărul de elemente din arr.
+
+
+
+\item \textbf{Detalii de implementare:}
+
+Pentru a implementa Counting Sort, vom urma următorii pași:
+\begin{itemize}
+\item  Inițializăm toate elementele tabloului count cu zero.
+Parcurgem tabloul arr și numărăm de câte ori apare fiecare element în count.
+\item  Parcurgem count și construim tabloul sortat arr utilizând informațiile de la pasul anterior.
+\end{itemize}
+
+
+
+\item Avantaje:
+
+-eficient pentru seturi de numere mici
+
+\item Dezavantaje:
+
+-destul de greu de înțeles și de implementat față de ceilalți algoritmi.
+\end{itemize}
+
+\begin{lstlisting}[caption=Metoda de numărare implementată în C]
+#define MAX 100000
+
+void counting_sort(int arr[], int n) {
+    int count[MAX + 1] = {0};
+    int i, j;
+
+    
+    for (i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+
+   
+    for (i = 0, j = 0; i <= MAX; i++) {
+        while (count[i] > 0) {
+            arr[j++] = i;
+            count[i]--;
+        }
+    }
+}
+\end{lstlisting}
+
+
+\newpage
+\section{Studiu de caz/ Experiment}
+
+\subsection{Experiment 1:}
+
+Pentru acest experiment, am măsurat timpul de execuție pentru
+2 tablouri de 100000 și 10000 elemente, însă cu valori mai restrânse, între 1 și 100. Apoi, l-am comparat între diferite metode de sortare. Timpul a fost măsurat în secunde.
+
+
+
+\begin{table}[htbp] 
+  \centering
+  \begin{tabular}{ ||r| c| c| c|| }
+    \hline\hline
+    \textbf{Algoritm} & \textbf{100000 numere} & \textbf{10000 numere} \\
+    \hline
+    Bubble Sort & 36,74 sec & 0,308 sec \\
+    Selection Sort & 13,43 sec & 0,165 sec \\
+    Insertion Sort & 7,87 sec & 0,117 sec \\
+    Merge Sort & \textbf{0,019 sec} & 0,003 sec \\
+    Quick Sort & 0,0275 sec & 0,004 sec \\
+    Counting Sort & \textbf{0,001} sec & 0,0001 sec\\
+    \hline\hline
+  \end{tabular}
+    \caption{Timpul de execuție}
+    \label{tab:timp}
+\end{table}
+
+
+După cum ne așteptam, dintre algoritmii care se bazează pe comparare, Bubble Sort
+rulează cel mai greu. 
+
+Un lucru foarte neașteptat și surprinzător este faptul că pentru setul de date dat, Counting Sort a rulat cel mai rapid. 
+Putem concluziona astfel că Counting Sort este mai eficient decât Merge Sort și Quick Sort pentru tablouri mari cu numere destul de mici.
+
+\vspace{0.5cm}
+
+\subsection{Experiment 2:}
+
+Pentru acest experiment, am sortat un tablou de 1000 de numere și vom număra
+numărul de comparații făcut la fiecare algoritm.
+
+\begin{table}[htbp] 
+  \centering
+  \begin{tabular}{ ||r| c| c| c|| }
+    \hline\hline
+    \textbf{Algoritm} & \textbf{Comparații} \\
+    \hline
+    Bubble Sort & 499500 \\
+    Selection Sort & 499500 \\
+    Insertion Sort & 251819 \\
+    Merge Sort & 8692 sec \\
+    Quick Sort & 10312 \\
+    \hline\hline
+  \end{tabular}
+    \caption{Numărul de comparații făcut de diferite metode de sortare}
+    \label{tab:comparatii}
+\end{table}
+Aici observăm că algoritmul de interschimbare și cel de selecție au făcut exact 499500 de comparații,
+ceea ce e de așteptat fiindcă au același ordin de complexitate, însă algoritmul de inserție a
+făcut mult mai puține comparații față de cele două, aproape de două ori mai puține,
+chiar dacă au același ordin de complexitate ca și celelalte, ceea ce este
+destul de neașteptat.
+
+
+\vspace{0.5cm}
+\subsection{Experiment 3:}
+Pentru acest experiment, am luat liste de 100, 500, 1000 și 2000 elemente și am rulat Bubble Sort, Insertion Sort, Quick Sort și Merge Sort de fiecare dată cu aceleași valori, măsurând timpul de execuție.
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      xlabel={Dimensiunea listei},
+      ylabel={Timp de execuție (milisecunde)},
+      legend style={at={(0.5,-0.2)}, anchor=north},
+      xtick=data,
+      ymin=0,
+      grid=both,
+      ]
+      
+      \addplot[color=blue, mark=square] coordinates {
+        (100, 0.5)
+        (500, 2.3)
+        (1000, 5.1)
+        (2000, 11.2)
+      };
+      \addlegendentry{Bubble Sort}
+      
+      \addplot[color=red, mark=triangle] coordinates {
+        (100, 0.2)
+        (500, 1.1)
+        (1000, 2.3)
+        (2000, 5.0)
+      };
+      \addlegendentry{Merge Sort}
+      
+      \addplot[color=green, mark=diamond] coordinates {
+        (100, 0.3)
+        (500, 1.5)
+        (1000, 3.2)
+        (2000, 6.9)
+      };
+      \addlegendentry{Quick Sort}
+      
+      \addplot[color=orange, mark=star] coordinates {
+        (100, 0.1)
+        (500, 0.8)
+        (1000, 1.6)
+        (2000, 3.5)
+      };
+      \addlegendentry{Insertion Sort}
+      
+      
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Rezultatele experimentului 3}
+\end{figure}
+
+În acest grafic, putem observa cum timpul de execuție crește în mod proporțional cu volumul datelor de intrare. Aici putem vedea din nou cum Bubble Sort devine din ce în ce mai ineficient pe timp ce volumul de date crește.
+
+Un alt lucru interesant pe care îl putem vedea este că pentru aceste seturi de date, Insertion Sort este mai rapid decât Merge Sort și Quick Sort. Și are sens, deoarece Insertion Sort sortează cu ușurință seturi destul de mici și destul de simple de date. Putem spune că acesta este unul dintre cazurile speciale în care interclasarea și partiționarea ne încetinesc procesul de sortare.
+
+\newpage
+\section{Comparație cu literatura}
+
+În această secțiune, vom compara rezultatele găsite cu cele din ~\cite{comparativestudy}. 
+
+În acest studiu, rezultatele obținute arată că Quick Sort și Merge Sort sunt mai eficiente decât Bubble Sort și Insertion Sort pentru seturi mari de date.
+
+Însă, acesta mai arată că Bubble Sort și Insertion Sort pot fi destul de eficiente pentru seturi mici de date sau parțial sortate. 
+
+Prin experimentele făcute, am reușit să avem aceleași rezultate, si chiar să vedem că Insertion Sort este mai rapid decât Merge Sort și Quick Sort.
+
+
+\section{Concluzii și direcții viitoare}
+
+Vedem că fiecare algoritm de sortare are avantaje și dezavantaje, și este puțin dificil să
+decizi care este cel mai bun. Fiecare algoritm are punctele lui forte, unele sunt mai
+optime decât altele, unele sunt mai ușor de înțeles și de implementat ș.a.m.d.
+
+Spre exemplu, vedem că Merge Sort și Quick Sort sunt cele mai optime când vine
+vorba de timpul de execuție, însă Merge Sort este mai stabil decât Quick Sort. În
+același timp Merge Sort nu funcționează pe seturi mici de date, iar Quick Sort
+funcționează pe mai multe tipuri de date… și lista poate continua.
+
+În urma experimentelor făcute, putem spune că Merge Sort și Quick Sort sunt cele mai
+bune pentru sortarea unor tablouri mari de numere.
+
+Însă un lucru chiar neașteptat pe care l-am observat în urma experimentelor este că există cazuri în care unele metode de sortare care de obicei sunt mai încete au putut sorta tablouri foarte mari într-un timp excelent. 
+
+În această notă, o sursă interesantă pe care nu am abordat-o în această lucrare este ~\cite{selection&quick}. În această lucrare se compară sortarea prin selecție cu cea prin partiționare, iar rezultatele arată că sortarea prin selecție are o mai bună performanță decât partiționarea.
+
+
+\pagebreak
+\bibliographystyle{unsrtnat}
+\bibliography{bibliografie}
+
+\end{document}
+ 
